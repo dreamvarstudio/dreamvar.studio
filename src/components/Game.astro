@@ -1,0 +1,69 @@
+---
+import Note from './Note.astro';
+
+const features = [
+  { title: 'Un mundo que respira', body: 'Todo late con el Pulso. La tinta sube cuando el mundo inhala, las repisas aparecen al compás y tus golpes pegan más fuerte si caen a tiempo.' },
+  { title: 'Pesadillas que tienen dueño', body: 'Cada enemigo es el miedo de alguien. Al vencerlo escuchas lo que el soñador murmura dormido.' },
+  { title: 'Liberar o devorar', body: 'Lo que decides con cada Pesadilla Mayor te hace más fuerte o le devuelve la paz a quien la soñó. Tus decisiones cambian el final.' },
+  { title: 'Pesadillas Recurrentes', body: 'La que te mata regresa carmesí, te roba una habilidad y la usa contra ti. Tienes que ir a recuperarla.' },
+  { title: 'Una casa que crece', body: 'Los Recuerdos que encuentras cambian el refugio de Nana, y también las reglas del juego.' },
+  { title: 'Un mundo conectado', body: 'Zonas conectadas, atajos y secretos que solo se alcanzan con habilidades nuevas: Deriva, Salto Lúcido, Eco…' },
+];
+const tilts = [-1.4, .9, -.6, 1.2, -1, .7];
+---
+<section class="section game" id="juego" aria-labelledby="game-title">
+  <div class="wrap">
+    <div class="game__intro">
+      <Note seed={3} tilt={-2} class="game__quote" as="figure">
+        <blockquote>¿Tú también tienes miedo? Puedes quedarte, pero no me asustes.</blockquote>
+        <figcaption>Nico, 7 años, a la sombra debajo de su cama</figcaption>
+      </Note>
+      <div class="game__story">
+        <p class="label">El juego</p>
+        <h2 class="h-hand h2" id="game-title">Bajo la cama de Nico empieza Subsomnia</h2>
+        <div class="prose soft">
+          <p>Subsomnia es el mundo donde viven los sueños que nadie terminó. Algo se rompió en el fondo, y cada noche los miedos regresan a sus dueños.</p>
+          <p>Rem es una pesadilla que aprendió a pensar. Baja por los sueños de un niño, una estudiante y un anciano para averiguar por qué, con la ayuda de Nana, que teje en su refugio entre el sueño y la vigilia.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h-hand game__notes-title">Lo que te espera allá abajo</h3>
+    <ul class="game__notes">
+      {features.map((f, i) => (
+        <Note seed={i + 10} tilt={tilts[i]} as="li">
+          <h4 class="h-hand">{f.title}</h4>
+          <p>{f.body}</p>
+        </Note>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .game__intro {
+    display: grid; gap: clamp(48px, 7vw, 96px); align-items: center;
+    grid-template-columns: 1fr; margin-bottom: clamp(80px, 10vw, 130px);
+  }
+  @media (min-width: 900px) { .game__intro { grid-template-columns: 5fr 7fr; } }
+  .game__story { display: grid; gap: 18px; }
+  .game__story .prose { font-size: 20px; }
+
+  :global(.game__quote) { margin: 0; max-width: 460px; justify-self: center; }
+  :global(.game__quote .note__paper) { padding: 44px 40px 48px; }
+  :global(.game__quote) blockquote {
+    margin: 0; font-family: var(--font-hand); font-size: clamp(30px, 3.2vw, 40px); line-height: 1.15; color: var(--paper-ink);
+  }
+  :global(.game__quote) figcaption { margin-top: 20px; font-family: var(--font-label); font-size: 16px; letter-spacing: .04em; color: var(--paper-ink-soft); }
+
+  .game__notes-title { font-size: clamp(32px, 3.6vw, 46px); margin-bottom: clamp(32px, 4vw, 48px); }
+  .game__notes {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: clamp(28px, 3.5vw, 44px) clamp(20px, 3vw, 36px);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  }
+  .game__notes :global(.note:hover) { transform: rotate(0deg) translateY(-4px); }
+  .game__notes :global(.note__paper) { height: 100%; }
+  .game__notes h4 { font-size: 30px; color: var(--paper-ink); margin-bottom: 10px; }
+  .game__notes p { margin: 0; font-size: 18px; line-height: 1.5; color: var(--paper-ink-soft); }
+</style>

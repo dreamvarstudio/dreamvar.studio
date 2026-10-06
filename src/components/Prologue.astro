@@ -1,0 +1,97 @@
+---
+// Prólogo animado: en bucle y sin sonido mientras está a la vista; al tocarlo se abre en grande.
+---
+<section class="prologue" aria-labelledby="prologue-title">
+  <div class="wrap prologue__grid">
+    <div class="prologue__text">
+      <p class="label">El prólogo</p>
+      <h2 class="h-hand h2" id="prologue-title">La noche en que Rem despertó</h2>
+      <p class="soft">Nico tiene siete años y no le gritó a la sombra que salió de debajo de su cama. Le habló. Esa noche, una pesadilla aprendió a pensar.</p>
+    </div>
+    <button class="prologue__frame" type="button" data-open-prologue aria-label="Ver el prólogo en grande">
+      <video id="prologueLoop" muted loop playsinline preload="none" poster="/img/avance-poster.webp">
+        <source src="/video/prologo.webm" type="video/webm" />
+        <source src="/video/prologo.mp4" type="video/mp4" />
+      </video>
+      <span class="prologue__play" aria-hidden="true">
+        <svg width="20" height="22" viewBox="0 0 11 12"><path d="M0 0l11 6-11 6z" /></svg>
+      </span>
+    </button>
+  </div>
+</section>
+
+<dialog class="modal" id="prologueModal" aria-label="Prólogo de Duermevela">
+  <div class="modal__box">
+    <form method="dialog"><button class="modal__close" aria-label="Cerrar">Cerrar ✕</button></form>
+    <video id="prologueFull" controls playsinline preload="none" poster="/img/avance-poster.webp">
+      <source src="/video/prologo.webm" type="video/webm" />
+      <source src="/video/prologo.mp4" type="video/mp4" />
+    </video>
+  </div>
+</dialog>
+
+<script>
+  const loop = document.getElementById('prologueLoop') as HTMLVideoElement;
+  const modal = document.getElementById('prologueModal') as HTMLDialogElement;
+  const full = document.getElementById('prologueFull') as HTMLVideoElement;
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = (navigator as any).connection?.saveData;
+
+  if (!calm && !saveData) {
+    new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && !modal.open) { loop.preload = 'auto'; loop.play().catch(() => {}); }
+        else loop.pause();
+      }
+    }, { threshold: 0.3 }).observe(loop);
+  }
+
+  document.querySelectorAll('[data-open-prologue]').forEach((b) =>
+    b.addEventListener('click', () => {
+      loop.pause();
+      modal.showModal();
+      full.currentTime = 0;
+      full.play().catch(() => {});
+    })
+  );
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
+  modal.addEventListener('close', () => full.pause());
+</script>
+
+<style>
+  .prologue { padding-block: clamp(56px, 8vw, 110px) clamp(80px, 10vw, 140px); }
+  .prologue__grid { display: grid; gap: clamp(28px, 4vw, 56px); align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 960px) { .prologue__grid { grid-template-columns: minmax(280px, 4fr) 8fr; } }
+  .prologue__text { display: grid; gap: 14px; }
+  .prologue__text p { margin: 0; }
+  .prologue__text .soft { font-size: 20px; text-wrap: pretty; max-width: 42ch; }
+  .prologue__frame {
+    position: relative; display: block; width: 100%; aspect-ratio: 1440 / 646; padding: 0; border: 0; cursor: pointer;
+    border-radius: 14px; overflow: hidden; background: var(--night-deep);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, .55), 0 0 0 1px var(--line);
+  }
+  .prologue__frame video { width: 100%; height: 100%; object-fit: cover; }
+  .prologue__play {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+    width: clamp(64px, 8vw, 88px); aspect-ratio: 1; border-radius: 50%;
+    display: grid; place-items: center; background: var(--lamp);
+    box-shadow: 0 0 0 10px rgba(242, 185, 108, .18), 0 0 40px var(--lamp-glow);
+    transition: transform .3s var(--ease), box-shadow .3s;
+  }
+  .prologue__play svg { fill: #2A1C0C; margin-left: 4px; }
+  .prologue__frame:hover .prologue__play { transform: scale(1.08); box-shadow: 0 0 0 14px rgba(242, 185, 108, .22), 0 0 60px var(--lamp-glow); }
+
+  .modal {
+    width: min(1280px, calc(100vw - 32px), calc((100dvh - 120px) * 1440 / 646));
+    max-width: none; padding: 0; border: 0; background: transparent; overflow: visible; margin: auto;
+  }
+  .modal::backdrop { background: rgba(5, 7, 13, .92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .modal__box { position: relative; padding-top: 56px; }
+  .modal video { width: 100%; aspect-ratio: 1440 / 646; background: #000; border-radius: 10px; }
+  .modal form { position: absolute; top: 0; right: 0; margin: 0; }
+  .modal__close {
+    height: 42px; padding: 0 18px; border-radius: 999px; border: 1.5px solid rgba(221, 227, 239, .3);
+    background: transparent; color: var(--text); font-family: var(--font-hand); font-size: 20px; cursor: pointer;
+  }
+  .modal__close:hover { border-color: var(--lamp); color: var(--lamp-bright); }
+</style>

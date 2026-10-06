@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('devlog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+const fmt = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+<section class="section devlog" id="devlog" aria-labelledby="devlog-title">
+  <div class="wrap devlog__grid">
+    <div class="section__head">
+      <p class="label">Devlog</p>
+      <h2 class="h-hand h2" id="devlog-title">Bitácora del descenso</h2>
+      <p>Notas de desarrollo, arte y anuncios, directo desde el estudio.</p>
+    </div>
+    <ul class="posts">
+      {posts.map((p) => (
+        <li>
+          <a class="post" href={`/devlog/${p.id}`}>
+            <span class="post__meta label"><span class="post__tag">{p.data.tag}</span> · <time datetime={p.data.date.toISOString().slice(0, 10)}>{fmt.format(p.data.date)}</time></span>
+            <span class="post__title h-hand">{p.data.title}</span>
+            <span class="post__summary">{p.data.summary}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .devlog__grid { display: grid; gap: clamp(24px, 4vw, 72px); grid-template-columns: 1fr; }
+  @media (min-width: 1000px) { .devlog__grid { grid-template-columns: 4fr 7fr; align-items: start; } }
+  .posts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .post {
+    display: grid; gap: 6px; padding: 26px 0 28px; border-bottom: 1px solid var(--line);
+    color: var(--text); text-decoration: none; transition: padding .35s var(--ease);
+  }
+  .post:hover { padding-left: 14px; }
+  .post:hover .post__title { color: var(--lamp-bright); }
+  .post__meta { font-size: 15px; color: var(--text-faint); }
+  .post__tag { color: var(--lamp); }
+  .post__title { font-size: clamp(28px, 2.8vw, 36px); line-height: 1.1; transition: color .25s; text-wrap: balance; }
+  .post__summary { color: var(--text-soft); font-size: 18px; text-wrap: pretty; }
+</style>

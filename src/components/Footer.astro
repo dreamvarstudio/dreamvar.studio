@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import emblema from '../assets/emblema.png';
+import Lock from './Lock.astro';
+import { socials, dates } from '../data/site';
+---
+<footer class="footer" id="contacto">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div class="footer__call">
+        <p class="label">Contacto</p>
+        <h2 class="h-hand h2">Entérate cuando abra la demo</h2>
+        <p class="soft">La demo llega al {dates.demo}{dates.demoTentative && ' (fecha tentativa)'} y el juego completo a {dates.launch.toLowerCase()}. Lo anunciaremos primero en redes.</p>
+      </div>
+      <ul class="socials">
+        {socials.map((s) => (
+          <li>
+            {s.href ? (
+              <a href={s.href} target="_blank" rel="noopener"><span>{s.label}</span><span class="socials__handle">{s.handle}</span></a>
+            ) : (
+              <span class="socials__locked" aria-disabled="true"><span>{s.label}</span><span class="socials__handle"><Lock />pronto</span></span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer__base">
+      <a href="/" class="footer__brand" aria-label="DreamVar Studio, inicio">
+        <Image src={emblema} alt="" width={36} height={36} />
+        <span>© {new Date().getFullYear()} DreamVar Studio</span>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: clamp(80px, 10vw, 140px) calc(28px + env(safe-area-inset-bottom, 0px));
+    background: radial-gradient(70% 60% at 50% 100%, rgba(176, 132, 245, .1), transparent 70%), var(--night-deep);
+  }
+  .footer__grid { display: grid; gap: 56px; grid-template-columns: 1fr; align-items: end; }
+  @media (min-width: 900px) { .footer__grid { grid-template-columns: 7fr 5fr; } }
+  .footer__call { display: grid; gap: 16px; }
+  .footer__call p { margin: 0; max-width: 54ch; text-wrap: pretty; }
+  .footer__call .soft { font-size: 20px; }
+  .socials { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .socials a, .socials__locked {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 14px 0; border-bottom: 1px solid var(--line);
+    font-family: var(--font-hand); font-size: 24px; text-decoration: none;
+  }
+  .socials a { color: var(--text); transition: color .25s, padding .3s var(--ease); }
+  .socials a:hover { color: var(--lamp-bright); padding-left: 10px; }
+  .socials__handle { font-family: var(--font-label); font-size: 15px; letter-spacing: .04em; color: var(--text-soft); display: inline-flex; align-items: center; gap: 8px; }
+  .socials__locked { color: var(--text-faint); cursor: not-allowed; }
+  .socials__locked .socials__handle { color: var(--text-faint); }
+  .footer__base {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 24px;
+    margin-top: clamp(64px, 8vw, 110px); padding-top: 22px; border-top: 1px solid var(--line);
+    font-size: 15px; color: var(--text-faint);
+  }
+  .footer__brand { display: flex; align-items: center; gap: 12px; color: var(--text-soft); text-decoration: none; }
+  .footer__brand img { width: 36px; height: 36px; }
+</style>

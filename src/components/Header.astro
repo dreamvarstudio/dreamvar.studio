@@ -1,0 +1,118 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/dreamvar-logo.png';
+import emblema from '../assets/emblema.png';
+import Lock from './Lock.astro';
+import { links } from '../data/site';
+
+const home = Astro.url.pathname === '/' ? '' : '/';
+const nav = [
+  { label: 'El juego', href: `${home}#juego` },
+  { label: 'Subsomnia', href: `${home}#subsomnia` },
+  { label: 'Estudio', href: `${home}#estudio` },
+  { label: 'Devlog', href: `${home}#devlog` },
+];
+---
+<header class="header" id="header">
+  <div class="header__bar">
+    <a href="/" class="brand" aria-label="DreamVar Studio, inicio">
+      <Image class="brand__emblem" src={emblema} alt="" width={42} height={42} densities={[1, 2]} loading="eager" />
+      <Image class="brand__wordmark" src={logo} alt="" height={40} densities={[1, 2]} loading="eager" />
+    </a>
+    <nav class="nav" aria-label="Principal">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <div class="header__actions">
+      {links.steam ? (
+        <a class="btn btn--lamp header__steam" href={links.steam} target="_blank" rel="noopener">Wishlist en Steam</a>
+      ) : (
+        <span class="btn locked header__steam" aria-disabled="true" title="La página de Steam abre pronto">
+          <Lock /><span class="header__steam-long">Wishlist en Steam</span><span class="header__steam-short">Steam</span>
+        </span>
+      )}
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Menú" hidden>
+    {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+    <a href={`${home}#contacto`}>Contacto</a>
+  </nav>
+</header>
+
+<script>
+  const header = document.getElementById('header')!;
+  const btn = document.getElementById('menuBtn')!;
+  const menu = document.getElementById('mobileNav')!;
+  const setMenu = (open: boolean) => {
+    header.classList.toggle('is-open', open);
+    menu.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  btn.addEventListener('click', () => setMenu(menu.hidden));
+  menu.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) setMenu(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
+  matchMedia('(min-width: 900px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
+  const onScroll = () => header.classList.toggle('is-scrolled', scrollY > 30);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+<style>
+  .header {
+    position: fixed; inset: 0 0 auto; z-index: 50;
+    padding-top: env(safe-area-inset-top, 0px);
+    transition: background .4s, border-color .4s;
+    border-bottom: 1px solid transparent;
+  }
+  .header.is-scrolled, .header.is-open {
+    background: rgba(13, 19, 34, .86);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border-bottom-color: var(--line);
+  }
+  .header__bar {
+    max-width: var(--max); margin-inline: auto; padding: 12px var(--gutter);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; flex-shrink: 0; }
+  .brand img { width: auto; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .6)); }
+  .brand__emblem { height: 42px; }
+  .brand__wordmark { height: 40px; }
+  @media (max-width: 359px) { .brand__wordmark { display: none; } }
+  .nav { display: none; gap: 4px; }
+  .nav a {
+    padding: 6px 14px; color: var(--text-soft); text-decoration: none;
+    font-family: var(--font-hand); font-size: 22px; transition: color .25s;
+  }
+  .nav a:hover { color: var(--lamp-bright); }
+  .header__actions { display: flex; align-items: center; gap: 10px; }
+  .header__steam { min-height: 44px; font-size: 19px; padding: 0 18px; }
+  .header__steam-short { display: none; }
+  .menu-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; flex-shrink: 0;
+  }
+  .menu-btn span { width: 18px; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform .3s var(--ease); }
+  .header.is-open .menu-btn span:first-child { transform: translateY(3.75px) rotate(45deg); }
+  .header.is-open .menu-btn span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+  .mobile-nav {
+    display: flex; flex-direction: column; padding: 12px var(--gutter) 32px;
+    height: calc(100dvh - var(--header-h) - env(safe-area-inset-top, 0px)); overflow-y: auto;
+  }
+  .mobile-nav[hidden] { display: none; }
+  .mobile-nav a {
+    padding: 14px 0; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none;
+    font-family: var(--font-hand); font-size: 34px;
+  }
+  @media (min-width: 900px) {
+    .nav { display: flex; }
+    .menu-btn, .mobile-nav { display: none !important; }
+  }
+  @media (max-width: 520px) {
+    .header__steam-long { display: none; }
+    .header__steam-short { display: inline; }
+  }
+</style>

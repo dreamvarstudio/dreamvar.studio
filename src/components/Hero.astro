@@ -1,0 +1,147 @@
+---
+import { getImage } from 'astro:assets';
+import hero from '../assets/hero.png';
+import heroMobile from '../assets/hero-mobile.png';
+import Lock from './Lock.astro';
+import { links, dates } from '../data/site';
+
+// Arte de la biblioteca de Steam: ancho en escritorio, recorte vertical centrado en Rem para el celular.
+const wide = await Promise.all([1280, 1920, 2880].map((w) => getImage({ src: hero, width: w, format: 'webp', quality: 78 })));
+const tall = await Promise.all([500, 1000].map((w) => getImage({ src: heroMobile, width: w, format: 'webp', quality: 78 })));
+const srcset = (imgs: { src: string; attributes: Record<string, any> }[]) =>
+  imgs.map((i) => `${i.src} ${i.attributes.width}w`).join(', ');
+---
+<section class="hero" aria-labelledby="hero-title">
+  <picture class="hero__art">
+    <source media="(max-width: 700px)" srcset={srcset(tall)} sizes="100vw" type="image/webp" />
+    <img src={wide[1].src} srcset={srcset(wide)} sizes="100vw" alt="Rem, una pequeña pesadilla de bruma violeta, mira el mar de sueños desde una orilla de piedra" fetchpriority="high" decoding="async" width="1920" height="620" />
+  </picture>
+  <div class="hero__shade" aria-hidden="true"></div>
+  <div class="hero__motes" id="motes" aria-hidden="true"></div>
+
+  <div class="hero__content wrap">
+    <p class="label hero__by">Un juego de DreamVar Studio</p>
+    <h1 class="hero__title" id="hero-title">
+      Duermevela
+      <span class="hero__sub">Rem y el Mar de Sueños</span>
+    </h1>
+    <p class="hero__lede">Eres Rem, una pequeña pesadilla hecha de bruma que despertó. Baja por los sueños de los demás y decide qué hacer con los miedos que nadie termina de soñar: liberarlos o devorarlos.</p>
+    <div class="hero__ctas">
+      <button class="btn btn--lamp" type="button" data-open-prologue>
+        <span class="btn__play" aria-hidden="true"><svg width="10" height="11" viewBox="0 0 11 12"><path d="M0 0l11 6-11 6z" /></svg></span>
+        Ver el prólogo
+      </button>
+      {links.steam ? (
+        <a class="btn btn--ghost" href={links.steam} target="_blank" rel="noopener">Agregar a la Wishlist</a>
+      ) : (
+        <span class="btn locked" aria-disabled="true" title="La página de Steam abre pronto"><Lock />Wishlist en Steam <span class="locked__tag">pronto</span></span>
+      )}
+    </div>
+    <dl class="hero__dates">
+      <div>
+        <dt class="label">Demo{dates.demoTentative && <span class="hero__tentative"> · fecha tentativa</span>}</dt>
+        <dd>{dates.demo}</dd>
+      </div>
+      <div>
+        <dt class="label">Lanzamiento</dt>
+        <dd>{dates.launch}</dd>
+      </div>
+      <div>
+        <dt class="label">Plataforma</dt>
+        <dd>PC, en Steam</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<script>
+  // Bruma que sube desde el mar: pocas motas, lentas.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const box = document.getElementById('motes');
+    if (box) {
+      const n = innerWidth < 700 ? 9 : 16;
+      for (let i = 0; i < n; i++) {
+        const m = document.createElement('span');
+        m.style.left = `${(i * 37 + 11) % 100}%`;
+        m.style.animationDuration = `${11 + ((i * 7) % 9)}s`;
+        m.style.animationDelay = `${-(i * 1.9).toFixed(1)}s`;
+        m.style.setProperty('--drift', `${((i * 13) % 40) - 20}px`);
+        box.appendChild(m);
+      }
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative; isolation: isolate; overflow: hidden;
+    min-height: min(100svh, 980px);
+    display: flex; align-items: flex-end;
+    padding-block: calc(120px + env(safe-area-inset-top, 0px)) clamp(40px, 6vw, 72px);
+  }
+  .hero__art { position: absolute; inset: 0; z-index: -3; }
+  .hero__art img { width: 100%; height: 100%; object-fit: cover; object-position: 68% 60%; }
+  .hero__shade {
+    position: absolute; inset: 0; z-index: -2;
+    background:
+      linear-gradient(90deg, rgba(10, 14, 26, .92) 0%, rgba(10, 14, 26, .7) 32%, rgba(10, 14, 26, .1) 62%, transparent 75%),
+      linear-gradient(180deg, rgba(19, 27, 48, .65) 0%, transparent 22%, transparent 70%, var(--night) 100%);
+  }
+  .hero__motes { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .hero__motes :global(span) {
+    position: absolute; bottom: -10px; width: 3px; height: 3px; border-radius: 50%;
+    background: #E2D2FF; box-shadow: 0 0 8px 1px var(--rem-glow);
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0% { transform: translate(0, 0); opacity: 0; }
+    15% { opacity: .8; }
+    100% { transform: translate(var(--drift), -85vh); opacity: 0; }
+  }
+
+  .hero__content { display: grid; gap: 22px; justify-items: start; }
+  .hero__content > * { max-width: 600px; }
+  .hero__content > .hero__dates { max-width: 760px; }
+  .hero__by { color: var(--text-soft); animation: fadeUp .9s .1s both var(--ease); }
+  .hero__title {
+    margin: 0; font-family: var(--font-hand); font-weight: 400; line-height: .9;
+    font-size: clamp(68px, 11.5vw, 152px); letter-spacing: .01em; color: #EFE6FF;
+    text-shadow: 0 0 28px var(--rem-glow), 0 0 4px rgba(190, 155, 247, .6);
+    max-width: none;
+    animation: fadeUp 1.1s .2s both var(--ease);
+  }
+  .hero__sub {
+    display: block; margin-top: 10px; font-size: clamp(26px, 2.8vw, 36px); line-height: 1.1;
+    color: var(--rem); text-shadow: 0 0 18px var(--rem-glow);
+  }
+  .hero__lede {
+    margin: 0; font-size: clamp(19px, 1.7vw, 22px); line-height: 1.5; color: var(--text); text-wrap: pretty;
+    text-shadow: 0 1px 12px rgba(8, 11, 20, .9);
+    animation: fadeUp 1.1s .4s both var(--ease);
+  }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; animation: fadeUp 1.1s .55s both var(--ease); }
+  .hero__dates {
+    margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 14px 40px;
+    padding-top: 20px; border-top: 1px solid var(--line);
+    animation: fadeUp 1.1s .7s both var(--ease);
+  }
+  .hero__dates div { display: grid; gap: 2px; }
+  .hero__dates dt { font-size: 14px; color: var(--text-faint); }
+  .hero__dates dd { margin: 0; font-family: var(--font-hand); font-size: 23px; color: var(--text); }
+  .hero__tentative { color: var(--text-faint); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 700px) {
+    .hero { min-height: auto; padding-top: 0; flex-direction: column; align-items: stretch; }
+    .hero__art { position: relative; inset: auto; height: 62svh; min-height: 380px; max-height: 560px; }
+    .hero__art img { object-position: 50% 40%; }
+    .hero__shade {
+      inset: 0 0 auto; height: 62svh; min-height: 380px; max-height: 560px;
+      background: linear-gradient(180deg, rgba(19, 27, 48, .7) 0%, transparent 20%, transparent 55%, var(--night) 100%);
+    }
+    .hero__content { margin-top: -110px; position: relative; }
+    .hero__ctas { width: 100%; }
+    .hero__ctas > * { flex: 1 1 100%; }
+    .hero__dates { gap: 14px 28px; }
+  }
+</style>

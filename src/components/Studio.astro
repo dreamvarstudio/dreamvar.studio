@@ -1,0 +1,41 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/dreamvar-logo.png';
+import emblema from '../assets/emblema.png';
+---
+<section class="section studio" id="estudio" aria-labelledby="studio-title">
+  <div class="wrap studio__grid">
+    <div class="studio__logo" role="img" aria-label="Logo de DreamVar Studio">
+      <Image class="studio__emblem" src={emblema} alt="" widths={[200, 360]} sizes="200px" quality={90} format="webp" />
+      <Image class="studio__wordmark" src={logo} alt="" widths={[480, 960]} sizes="(max-width: 900px) 80vw, 440px" quality={85} format="webp" />
+    </div>
+    <div class="studio__text">
+      <p class="label">El estudio</p>
+      <h2 class="h-hand h2" id="studio-title">Pocos juegos, muy cuidados</h2>
+      <div class="prose soft">
+        <p>DreamVar Studio es un estudio independiente liderado por Alejandro Vargas. Cada mundo que hacemos nace de una pregunta: ¿qué se siente perderse en él?</p>
+        <p>Buscamos atmósferas que se queden contigo, una estética de autor reconocible y un gameplay pulido hasta el último frame. <em>Duermevela</em> es nuestro primer juego.</p>
+      </div>
+      <p class="studio__sign">
+        <span class="h-hand">Alejandro Vargas</span>
+        <span class="label">Fundador y director creativo</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .studio { border-block: 1px solid var(--line); background: linear-gradient(180deg, rgba(27, 37, 66, .45), rgba(27, 37, 66, 0)); }
+  .studio__grid { display: grid; gap: clamp(40px, 6vw, 96px); align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .studio__grid { grid-template-columns: 5fr 7fr; } }
+  .studio__logo { display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vw, 12px); }
+  .studio__logo img { height: auto; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .55)); }
+  .studio__emblem { width: clamp(120px, 16vw, 200px); }
+  .studio__wordmark { width: 100%; max-width: 440px; }
+  .studio__text { display: grid; gap: 18px; }
+  .studio__text .prose { font-size: 20px; }
+  .studio__text em { color: var(--rem); font-style: italic; }
+  .studio__sign { display: grid; gap: 2px; margin: 8px 0 0; padding-left: 18px; border-left: 2px solid var(--lamp); }
+  .studio__sign .h-hand { font-size: 28px; color: var(--text); }
+  .studio__sign .label { font-size: 15px; }
+</style>
