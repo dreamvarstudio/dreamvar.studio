@@ -2,15 +2,50 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { links } from '../data/site';
 
-interface Props { title?: string; description?: string; image?: string }
+interface Props { title?: string; description?: string; image?: string; schema?: Record<string, unknown> }
 const {
   title = 'DreamVar Studio · Duermevela: Rem y el Mar de Sueños',
   description = 'DreamVar Studio es un estudio independiente de videojuegos. Su primer juego, Duermevela: Rem y el Mar de Sueños, es un metroidvania 2D con demo en el Steam Next Fest de febrero de 2027.',
   image = '/img/og.jpg',
+  schema,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
+
+// Datos estructurados para Google: el estudio, el sitio y el juego (y lo que agregue cada página).
+const site = Astro.site!.href;
+const studio = {
+  '@type': 'Organization',
+  '@id': `${site}#estudio`,
+  name: 'DreamVar Studio',
+  url: site,
+  logo: new URL('/img/icon-512.png', site).href,
+  founder: { '@type': 'Person', name: 'Alejandro Vargas' },
+  sameAs: Object.values(links).filter(Boolean),
+};
+const graph = [
+  studio,
+  { '@type': 'WebSite', '@id': `${site}#sitio`, name: 'DreamVar Studio', url: site, inLanguage: 'es', publisher: { '@id': studio['@id'] } },
+  {
+    '@type': 'VideoGame',
+    '@id': `${site}#duermevela`,
+    name: 'Duermevela: Rem y el Mar de Sueños',
+    alternateName: 'Duermevela: Rem and the Sea of Dreams',
+    url: site,
+    image: new URL('/img/og.jpg', site).href,
+    description: 'Metroidvania 2D pintado a mano. Eres Rem, una pequeña pesadilla de bruma que baja por Subsomnia, el mar de sueños de todos, y decide qué hacer con los miedos que encuentra: liberarlos o devorarlos.',
+    genre: ['Metroidvania', 'Plataformas', 'Aventura'],
+    gamePlatform: ['PC', 'Windows', 'Linux'],
+    playMode: 'SinglePlayer',
+    inLanguage: ['es', 'en'],
+    author: { '@id': studio['@id'] },
+    publisher: { '@id': studio['@id'] },
+  },
+  ...(schema ? [schema] : []),
+];
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 ---
 <!doctype html>
 <html lang="es">
@@ -30,12 +65,15 @@ const ogImage = new URL(image, Astro.site);
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="es_MX">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/img/icon-192.png">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="sitemap" href="/sitemap-index.xml">
   <link rel="preload" href="/fonts/patrick-hand.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/alegreya.woff2" as="font" type="font/woff2" crossorigin>
+  <script type="application/ld+json" set:html={jsonLd} />
   <slot name="head" />
 </head>
 <body>
