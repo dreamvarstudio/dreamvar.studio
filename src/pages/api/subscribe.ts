@@ -169,8 +169,12 @@ function buildWelcomeEmail(): string {
             <p style="margin:0 0 6px; font-family:Georgia,serif; font-size:13px; color:${C.textFaint};">
               © ${new Date().getFullYear()} DreamVar Studio
             </p>
-            <p style="margin:0; font-family:Georgia,serif; font-size:13px; color:${C.textFaint};">
+            <p style="margin:0 0 12px; font-family:Georgia,serif; font-size:13px; color:${C.textFaint};">
               <a href="mailto:hola@dreamvar.studio" style="color:${C.textFaint}; text-decoration:underline;">hola@dreamvar.studio</a>
+            </p>
+            <p style="margin:0; font-family:Georgia,serif; font-size:12px; line-height:1.5; color:${C.textFaint};">
+              Si no deseas recibir más avisos, 
+              <a href="mailto:hola@dreamvar.studio?subject=Cancelar%20suscripci%C3%B3n" style="color:${C.textSoft}; text-decoration:underline;">cancela tu suscripción aquí</a>.
             </p>
           </td>
         </tr>
@@ -311,15 +315,14 @@ export const POST: APIRoute = async ({ request }) => {
 
     // ── 3. Respuesta ──────────────────────────────────────────────────
     const message = isNew
-      ? `¡Listo! Te avisaremos cuando salga la demo. [Debug Brevo: ${brevoDebug}]`
-      : `Ya estás en la lista. ¡Te avisaremos! [Debug Brevo: ${brevoDebug}]`;
+      ? '¡Listo! Te avisaremos cuando salga la demo. Revisa tu correo.'
+      : 'Ya estás en la lista. ¡Te avisaremos!';
 
     return new Response(
       JSON.stringify({ success: true, message }),
       { status: 200, headers },
     );
   } catch (err: unknown) {
-    const errMsg = err instanceof Error ? err.message : String(err);
     console.error('[subscribe] Error:', err);
 
     // Duplicado explícito (safety net)
@@ -331,7 +334,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     return new Response(
-      JSON.stringify({ success: false, message: `Error del servidor: ${errMsg}` }),
+      JSON.stringify({ success: false, message: 'Error del servidor. Intenta más tarde.' }),
       { status: 500, headers },
     );
   }
