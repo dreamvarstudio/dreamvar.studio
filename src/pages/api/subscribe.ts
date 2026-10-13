@@ -205,8 +205,12 @@ export const POST: APIRoute = async ({ request }) => {
     const databaseUrl =
       import.meta.env.DATABASE_URL ||
       import.meta.env.POSTGRES_URL ||
+      import.meta.env.DATABASE_URL_UNPOOLED ||
+      import.meta.env.POSTGRES_URL_NON_POOLING ||
       process.env.DATABASE_URL ||
-      process.env.POSTGRES_URL;
+      process.env.POSTGRES_URL ||
+      process.env.DATABASE_URL_UNPOOLED ||
+      process.env.POSTGRES_URL_NON_POOLING;
 
     if (!databaseUrl) {
       console.error('[subscribe] DATABASE_URL o POSTGRES_URL no está configurada en las variables de entorno.');
@@ -237,7 +241,11 @@ export const POST: APIRoute = async ({ request }) => {
     const isNew = rows.length > 0;
 
     // ── 2. Brevo: email transaccional + contacto ──────────────────────
-    const brevoKey = import.meta.env.BREVO_API_KEY || process.env.BREVO_API_KEY;
+    const brevoKey =
+      import.meta.env.BREVO_API_KEY ||
+      import.meta.env.BREVO_API_CLAVE ||
+      process.env.BREVO_API_KEY ||
+      process.env.BREVO_API_CLAVE;
 
     if (brevoKey && isNew) {
       const brevoHeaders = {
