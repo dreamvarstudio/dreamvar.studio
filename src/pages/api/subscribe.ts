@@ -202,9 +202,14 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // ── 1. Base de datos ──────────────────────────────────────────────
-    const databaseUrl = import.meta.env.DATABASE_URL;
+    const databaseUrl =
+      import.meta.env.DATABASE_URL ||
+      import.meta.env.POSTGRES_URL ||
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL;
+
     if (!databaseUrl) {
-      console.error('[subscribe] DATABASE_URL no está configurada');
+      console.error('[subscribe] DATABASE_URL o POSTGRES_URL no está configurada en las variables de entorno.');
       return new Response(
         JSON.stringify({ success: false, message: 'Error del servidor. Intenta más tarde.' }),
         { status: 500, headers },
@@ -232,7 +237,7 @@ export const POST: APIRoute = async ({ request }) => {
     const isNew = rows.length > 0;
 
     // ── 2. Brevo: email transaccional + contacto ──────────────────────
-    const brevoKey = import.meta.env.BREVO_API_KEY;
+    const brevoKey = import.meta.env.BREVO_API_KEY || process.env.BREVO_API_KEY;
 
     if (brevoKey && isNew) {
       const brevoHeaders = {
@@ -262,7 +267,7 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       // 2b. Agregar contacto a lista (opcional)
-      const brevoListId = import.meta.env.BREVO_LIST_ID;
+      const brevoListId = import.meta.env.BREVO_LIST_ID || process.env.BREVO_LIST_ID;
       if (brevoListId) {
         try {
           await fetch('https://api.brevo.com/v3/contacts', {
