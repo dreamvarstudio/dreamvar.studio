@@ -1,0 +1,170 @@
+---
+// Sección de suscripción para la lista de espera de la Demo.
+---
+<section class="section demo-signup" id="demo" aria-labelledby="demo-title">
+  <div class="wrap">
+    <div class="demo-signup__content">
+      <p class="label">Lista de espera</p>
+      <h2 class="h-hand h2" id="demo-title">Sé el primero en jugar la Demo de Duermevela</h2>
+      <p class="soft demo-signup__sub">Únete a la lista de espera para recibir acceso anticipado y enterarte el día del lanzamiento.</p>
+
+      <form class="demo-signup__form" id="demo-form" novalidate>
+        <div class="demo-signup__field">
+          <input
+            type="email"
+            name="email"
+            id="demo-email"
+            class="demo-signup__input"
+            placeholder="tu@correo.com"
+            autocomplete="email"
+            required
+          />
+          <button type="submit" class="btn btn--lamp demo-signup__btn">
+            Avisarme
+          </button>
+        </div>
+        <p class="demo-signup__msg" id="demo-msg" aria-live="polite"></p>
+        <p class="demo-signup__privacy">Al registrarte, aceptas nuestra <a href="/privacy" target="_blank">Política de Privacidad</a>. Puedes cancelar tu suscripción en cualquier momento.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('demo-form') as HTMLFormElement;
+  const input = document.getElementById('demo-email') as HTMLInputElement;
+  const msg = document.getElementById('demo-msg') as HTMLParagraphElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = input.value.trim();
+    if (!email) return;
+
+    const btn = form.querySelector('button') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    msg.textContent = '';
+    msg.className = 'demo-signup__msg';
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      msg.textContent = data.message;
+      msg.classList.add(data.success ? 'demo-signup__msg--ok' : 'demo-signup__msg--err');
+
+      if (data.success) {
+        input.value = '';
+      }
+    } catch {
+      msg.textContent = 'Error de conexión. Intenta de nuevo.';
+      msg.classList.add('demo-signup__msg--err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Avisarme';
+    }
+  });
+</script>
+
+<style>
+  .demo-signup {
+    position: relative;
+    text-align: center;
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(176, 132, 245, .08), transparent 70%),
+      radial-gradient(50% 50% at 50% 100%, rgba(242, 185, 108, .06), transparent 70%);
+  }
+  .demo-signup__content {
+    max-width: 640px;
+    margin-inline: auto;
+    display: grid;
+    gap: 16px;
+    justify-items: center;
+  }
+  .demo-signup__content .label { text-align: center; }
+  .demo-signup__content .h2 { text-align: center; }
+  .demo-signup__sub {
+    font-size: 20px;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .demo-signup__form { margin-top: 12px; width: 100%; max-width: 480px; }
+
+  .demo-signup__field {
+    display: flex;
+    gap: 0;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1.5px solid var(--line);
+    background: rgba(8, 11, 20, .5);
+    transition: border-color .25s;
+  }
+  .demo-signup__field:focus-within {
+    border-color: var(--lamp);
+    box-shadow: 0 0 0 3px var(--lamp-glow);
+  }
+
+  .demo-signup__input {
+    flex: 1;
+    min-width: 0;
+    padding: 0 20px;
+    height: 52px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 17px;
+    outline: none;
+  }
+  .demo-signup__input::placeholder { color: var(--text-faint); }
+
+  .demo-signup__btn {
+    flex-shrink: 0;
+    border-radius: 0 999px 999px 0;
+    border: none;
+    min-height: 52px;
+    padding: 0 28px;
+  }
+  .demo-signup__btn:disabled {
+    opacity: .6;
+    cursor: wait;
+  }
+
+  .demo-signup__msg {
+    min-height: 24px;
+    margin: 12px 0 0;
+    font-size: 16px;
+    font-family: var(--font-label);
+    letter-spacing: .03em;
+    transition: color .25s;
+  }
+  .demo-signup__msg--ok { color: #7BE89A; }
+  .demo-signup__msg--err { color: #F77; }
+
+  .demo-signup__privacy {
+    margin: 14px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-faint);
+  }
+  .demo-signup__privacy a {
+    color: var(--text-soft);
+    text-underline-offset: .2em;
+    transition: color .25s;
+  }
+  .demo-signup__privacy a:hover { color: var(--lamp-bright); }
+
+  @media (max-width: 500px) {
+    .demo-signup__field {
+      flex-direction: column;
+      border-radius: 16px;
+    }
+    .demo-signup__input { border-radius: 16px 16px 0 0; }
+    .demo-signup__btn { border-radius: 0 0 16px 16px; width: 100%; }
+  }
+</style>

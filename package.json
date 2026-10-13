@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/vercel": "^11.0.14",
+    "@neondatabase/serverless": "^1.2.0",
+    "@vercel/postgres": "^0.10.0",
     "astro": "^7.3.6"
   }
 }

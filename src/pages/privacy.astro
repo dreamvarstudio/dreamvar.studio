@@ -1,0 +1,161 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="Política de Privacidad · DreamVar Studio"
+  description="Aviso de privacidad de DreamVar Studio. Conoce cómo usamos tu correo electrónico y tus derechos como suscriptor."
+>
+  <section class="section privacy" aria-labelledby="privacy-title">
+    <div class="wrap">
+      <a href="/" class="privacy__back">← Volver al inicio</a>
+
+      <h1 class="h-hand h2" id="privacy-title">Política de Privacidad</h1>
+      <p class="privacy__updated">Última actualización: octubre de 2026</p>
+
+      <div class="privacy__body prose">
+
+        <h2>1. Responsable de los datos</h2>
+        <p>
+          Los datos recabados a través de este sitio web son gestionados por
+          <strong>DreamVar Studio</strong>, proyecto independiente de desarrollo de videojuegos.
+          Puedes contactarnos en cualquier momento a través de
+          <a href="mailto:hola@dreamvar.studio">hola@dreamvar.studio</a>.
+        </p>
+
+        <h2>2. Qué datos recopilamos</h2>
+        <p>
+          Únicamente recopilamos tu <strong>dirección de correo electrónico</strong> cuando te
+          registras voluntariamente en la lista de espera de la Demo de <em>Duermevela: Rem y el Mar de Sueños</em>.
+        </p>
+        <p>
+          No recopilamos nombres, direcciones, datos de pago ni ningún otro dato personal.
+        </p>
+
+        <h2>3. Para qué usamos tu correo</h2>
+        <p>Tu correo electrónico se utiliza exclusivamente para:</p>
+        <ul>
+          <li>Notificarte cuando la Demo esté disponible en Steam.</li>
+          <li>Enviarte novedades sobre el avance del desarrollo de <em>Duermevela</em>.</li>
+          <li>Informarte sobre el lanzamiento del juego completo.</li>
+        </ul>
+        <p>
+          <strong>No enviamos spam.</strong> No recibirás correos de terceros ni publicidad ajena
+          a DreamVar Studio.
+        </p>
+
+        <h2>4. Almacenamiento y seguridad</h2>
+        <p>
+          Tu correo se almacena de forma segura en una base de datos alojada en
+          <strong>Neon Postgres</strong> (a través de la infraestructura de Vercel) y se procesa
+          mediante los servicios de <strong>Brevo</strong> (anteriormente Sendinblue) para el
+          envío de correos transaccionales.
+        </p>
+        <p>
+          Ambos proveedores cumplen con estándares de seguridad de la industria y operan bajo
+          regulaciones de protección de datos.
+        </p>
+
+        <h2>5. Compartición con terceros</h2>
+        <p>
+          <strong>Nunca vendemos, cedemos ni compartimos tu correo electrónico con terceros</strong>
+          con fines comerciales o publicitarios. Los únicos terceros que procesan tu información
+          son los proveedores de infraestructura mencionados arriba (Vercel y Brevo), estrictamente
+          para el funcionamiento del servicio.
+        </p>
+
+        <h2>6. Tus derechos</h2>
+        <p>En cualquier momento puedes:</p>
+        <ul>
+          <li>
+            <strong>Cancelar tu suscripción</strong> haciendo clic en el enlace de cancelación
+            incluido al final de cada correo que recibas.
+          </li>
+          <li>
+            <strong>Solicitar la eliminación de tus datos</strong> enviando un correo a
+            <a href="mailto:hola@dreamvar.studio">hola@dreamvar.studio</a> con el asunto
+            "Eliminar mis datos". Procesaremos tu solicitud en un plazo máximo de 30 días.
+          </li>
+        </ul>
+
+        <h2>7. Cambios en esta política</h2>
+        <p>
+          Nos reservamos el derecho de actualizar esta política. Si realizamos cambios significativos,
+          lo comunicaremos a través de nuestros canales oficiales. La fecha de "Última actualización"
+          al inicio de esta página refleja la versión vigente.
+        </p>
+
+        <h2>8. Contacto</h2>
+        <p>
+          Si tienes preguntas sobre esta política o sobre el tratamiento de tus datos, escríbenos a
+          <a href="mailto:hola@dreamvar.studio">hola@dreamvar.studio</a>.
+        </p>
+      </div>
+
+      <div class="privacy__footer">
+        <a href="/" class="btn btn--ghost">← Volver al inicio</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .privacy {
+    padding-top: calc(var(--header-h) + clamp(40px, 5vw, 80px));
+  }
+  .privacy__back {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-family: var(--font-label);
+    font-size: 15px;
+    letter-spacing: .04em;
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: color .25s;
+  }
+  .privacy__back:hover { color: var(--lamp-bright); }
+
+  .privacy__updated {
+    margin: 12px 0 0;
+    font-family: var(--font-label);
+    font-size: 14px;
+    letter-spacing: .04em;
+    color: var(--text-faint);
+  }
+
+  .privacy__body {
+    margin-top: clamp(32px, 4vw, 56px);
+    max-width: 68ch;
+  }
+  .privacy__body h2 {
+    font-family: var(--font-hand);
+    font-weight: 400;
+    font-size: clamp(24px, 2.6vw, 30px);
+    color: var(--text);
+    margin: 2.2em 0 .6em;
+    line-height: 1.15;
+  }
+  .privacy__body h2:first-child { margin-top: 0; }
+  .privacy__body p {
+    color: var(--text-soft);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .privacy__body ul {
+    color: var(--text-soft);
+    font-size: 18px;
+    line-height: 1.7;
+    padding-left: 1.4em;
+    margin: 0 0 1em;
+  }
+  .privacy__body li { margin-bottom: .4em; }
+  .privacy__body a { color: var(--lamp); }
+  .privacy__body a:hover { color: var(--lamp-bright); }
+  .privacy__body strong { color: var(--text); }
+  .privacy__body em { color: var(--rem); font-style: italic; }
+
+  .privacy__footer {
+    margin-top: clamp(48px, 6vw, 80px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+</style>

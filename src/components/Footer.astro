@@ -29,6 +29,11 @@ import { socials, dates } from '../data/site';
         <Image src={emblema} alt="" width={36} height={36} />
         <span>© {new Date().getFullYear()} DreamVar Studio</span>
       </a>
+      <div class="footer__contact">
+        <a href="mailto:hola@dreamvar.studio" class="footer__email">hola@dreamvar.studio</a>
+        <span class="footer__sep" aria-hidden="true">·</span>
+        <a href="https://www.instagram.com/m4cz_pm/" target="_blank" rel="noopener" class="footer__social">Audio Lead: @m4cz_pm</a>
+      </div>
     </div>
   </div>
 </footer>
@@ -61,4 +66,8 @@ import { socials, dates } from '../data/site';
   }
   .footer__brand { display: flex; align-items: center; gap: 12px; color: var(--text-soft); text-decoration: none; }
   .footer__brand img { width: 36px; height: 36px; }
+  .footer__contact { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .footer__email, .footer__social { color: var(--text-faint); text-decoration: none; font-size: 15px; transition: color .25s; }
+  .footer__email:hover, .footer__social:hover { color: var(--lamp-bright); }
+  .footer__sep { color: var(--text-faint); font-size: 15px; }
 </style>
