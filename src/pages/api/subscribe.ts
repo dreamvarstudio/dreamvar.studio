@@ -257,19 +257,24 @@ export const POST: APIRoute = async ({ request }) => {
 
       // 2a. Correo transaccional de bienvenida
       try {
+        const senderEmail = process.env.BREVO_SENDER_EMAIL || 'hola@dreamvar.studio';
+        const senderName = process.env.BREVO_SENDER_NAME || 'DreamVar Studio';
+
         const emailRes = await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',
           headers: brevoHeaders,
           body: JSON.stringify({
-            sender: { name: 'DreamVar Studio', email: 'no-reply@dreamvar.studio' },
+            sender: { name: senderName, email: senderEmail },
             to: [{ email }],
-            subject: '¡Estás en la lista de espera de Duermevela! 🌙',
+            subject: '¡Estás en la lista de espera de Duermevela!',
             htmlContent: buildWelcomeEmail(),
           }),
         });
         if (!emailRes.ok) {
           const errBody = await emailRes.text();
           console.error('[subscribe] Brevo SMTP error:', emailRes.status, errBody);
+        } else {
+          console.log('[subscribe] Correo de bienvenida enviado exitosamente a:', email);
         }
       } catch (mailErr) {
         console.error('[subscribe] Error al enviar correo de bienvenida:', mailErr);
@@ -296,7 +301,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // ── 3. Respuesta ──────────────────────────────────────────────────
     const message = isNew
-      ? '¡Listo! Te avisaremos cuando salga la demo. Revisa tu correo 🌙'
+      ? '¡Listo! Te avisaremos cuando salga la demo. Revisa tu correo.'
       : 'Ya estás en la lista. ¡Te avisaremos!';
 
     return new Response(
