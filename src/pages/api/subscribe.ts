@@ -213,9 +213,9 @@ export const POST: APIRoute = async ({ request }) => {
       process.env.POSTGRES_URL_NON_POOLING;
 
     if (!databaseUrl) {
-      console.error('[subscribe] DATABASE_URL o POSTGRES_URL no está configurada en las variables de entorno.');
+      console.error('[subscribe] No se encontro DATABASE_URL ni POSTGRES_URL');
       return new Response(
-        JSON.stringify({ success: false, message: 'Error del servidor. Intenta más tarde.' }),
+        JSON.stringify({ success: false, message: 'Error de configuración: no se detectó DATABASE_URL en el servidor.' }),
         { status: 500, headers },
       );
     }
@@ -303,6 +303,7 @@ export const POST: APIRoute = async ({ request }) => {
       { status: 200, headers },
     );
   } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
     console.error('[subscribe] Error:', err);
 
     // Duplicado explícito (safety net)
@@ -314,7 +315,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     return new Response(
-      JSON.stringify({ success: false, message: 'Algo salió mal. Intenta de nuevo.' }),
+      JSON.stringify({ success: false, message: `Error del servidor: ${errMsg}` }),
       { status: 500, headers },
     );
   }
