@@ -213,9 +213,10 @@ export const POST: APIRoute = async ({ request }) => {
       process.env.POSTGRES_URL_NON_POOLING;
 
     if (!databaseUrl) {
-      console.error('[subscribe] No se encontro DATABASE_URL ni POSTGRES_URL');
+      const keys = Object.keys(process.env).filter(k => !k.startsWith('npm_')).join(', ');
+      console.error('[subscribe] No se encontro DATABASE_URL ni POSTGRES_URL. Claves disponibles:', keys);
       return new Response(
-        JSON.stringify({ success: false, message: 'Error de configuración: no se detectó DATABASE_URL en el servidor.' }),
+        JSON.stringify({ success: false, message: `Error: no se detectó DATABASE_URL. Claves en server: [${keys}]` }),
         { status: 500, headers },
       );
     }
