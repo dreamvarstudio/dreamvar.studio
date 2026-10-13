@@ -257,7 +257,7 @@ export const POST: APIRoute = async ({ request }) => {
 
       // 2a. Correo transaccional de bienvenida
       try {
-        const senderEmail = process.env.BREVO_SENDER_EMAIL || 'hola@dreamvar.studio';
+        const senderEmail = process.env.BREVO_SENDER_EMAIL || 'no-reply@dreamvar.studio';
         const senderName = process.env.BREVO_SENDER_NAME || 'DreamVar Studio';
 
         const emailRes = await fetch('https://api.brevo.com/v3/smtp/email', {
