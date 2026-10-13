@@ -248,7 +248,13 @@ export const POST: APIRoute = async ({ request }) => {
       process.env.BREVO_API_KEY ||
       process.env.BREVO_API_CLAVE;
 
-    if (brevoKey && isNew) {
+    let brevoDebug = 'Brevo no ejecutado (no era nuevo o falta API key)';
+
+    if (!brevoKey) {
+      brevoDebug = 'Falta BREVO_API_KEY en variables de entorno';
+    } else if (!isNew) {
+      brevoDebug = 'El correo ya existía en la base de datos (no se envía bienvenida duplicada)';
+    } else {
       const brevoHeaders = {
         'api-key': brevoKey,
         'Content-Type': 'application/json',
@@ -270,14 +276,18 @@ export const POST: APIRoute = async ({ request }) => {
             htmlContent: buildWelcomeEmail(),
           }),
         });
+
+        const resText = await emailRes.text();
         if (!emailRes.ok) {
-          const errBody = await emailRes.text();
-          console.error('[subscribe] Brevo SMTP error:', emailRes.status, errBody);
+          console.error('[subscribe] Brevo SMTP error:', emailRes.status, resText);
+          brevoDebug = `Brevo Error (${emailRes.status}): ${resText}`;
         } else {
-          console.log('[subscribe] Correo de bienvenida enviado exitosamente a:', email);
+          console.log('[subscribe] Correo de bienvenida enviado exitosamente a:', email, resText);
+          brevoDebug = `OK: ${resText}`;
         }
       } catch (mailErr) {
         console.error('[subscribe] Error al enviar correo de bienvenida:', mailErr);
+        brevoDebug = `Exception: ${mailErr instanceof Error ? mailErr.message : String(mailErr)}`;
       }
 
       // 2b. Agregar contacto a lista (opcional)
@@ -301,8 +311,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     // ── 3. Respuesta ──────────────────────────────────────────────────
     const message = isNew
-      ? '¡Listo! Te avisaremos cuando salga la demo. Revisa tu correo.'
-      : 'Ya estás en la lista. ¡Te avisaremos!';
+      ? `¡Listo! Te avisaremos cuando salga la demo. [Debug Brevo: ${brevoDebug}]`
+      : `Ya estás en la lista. ¡Te avisaremos! [Debug Brevo: ${brevoDebug}]`;
 
     return new Response(
       JSON.stringify({ success: true, message }),
